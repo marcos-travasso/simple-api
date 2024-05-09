@@ -1,0 +1,15 @@
+meta {
+  name: Get balance
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/balance?account_id=1234
+  body: none
+  auth: none
+}
+
+query {
+  account_id: 1234
+}

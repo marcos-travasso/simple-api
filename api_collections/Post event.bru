@@ -1,0 +1,19 @@
+meta {
+  name: Post event
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{BASE_URL}}/event
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "type": "deposit",
+    "destination": "100",
+    "amount": 10
+  }
+}
