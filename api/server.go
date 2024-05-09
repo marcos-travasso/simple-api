@@ -1,8 +1,7 @@
 package api
 
 import (
-	"github.com/marcos-travasso/simple-api/core/repository"
-	"github.com/marcos-travasso/simple-api/core/repository/in_memory"
+	"fmt"
 	core "github.com/marcos-travasso/simple-api/core/service"
 	"log"
 	"net/http"
@@ -11,9 +10,8 @@ import (
 
 var service *core.Service
 
-func StartServer() {
-	repo := in_memory.NewRepository()
-	CreateService(repo)
+func StartServer(s *core.Service) {
+	InjectService(s)
 
 	http.HandleFunc("POST /reset", resetHandler)
 	http.HandleFunc("GET /balance", getBalanceHandler)
@@ -23,6 +21,8 @@ func StartServer() {
 	if os.Getenv("PORT") != "" {
 		port = ":" + os.Getenv("PORT")
 	}
+
+	log.Println(fmt.Sprintf("Listening at %s", port))
 	log.Fatal(http.ListenAndServe(port, nil))
 }
 
@@ -30,6 +30,6 @@ func GetService() *core.Service {
 	return service
 }
 
-func CreateService(repo repository.Repository) {
-	service = core.NewService(repo)
+func InjectService(s *core.Service) {
+	service = s
 }

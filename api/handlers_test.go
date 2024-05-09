@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/marcos-travasso/simple-api/core/models"
 	"github.com/marcos-travasso/simple-api/core/repository/in_memory"
+	core "github.com/marcos-travasso/simple-api/core/service"
 	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/http/httptest"
@@ -13,7 +14,8 @@ import (
 
 func Test_GetBalanceHandler(t *testing.T) {
 	t.Run("should return not found for non existing account", func(t *testing.T) {
-		CreateService(in_memory.NewRepository())
+		repo := in_memory.NewRepository()
+		InjectService(core.NewService(repo))
 
 		req := httptest.NewRequest("GET", "/balance?account_id=1234", nil)
 		w := httptest.NewRecorder()
@@ -25,7 +27,7 @@ func Test_GetBalanceHandler(t *testing.T) {
 
 	t.Run("should return balance for existing account", func(t *testing.T) {
 		repo := in_memory.NewRepository()
-		CreateService(repo)
+		InjectService(core.NewService(repo))
 
 		req := httptest.NewRequest("GET", "/balance?account_id=100", nil)
 		w := httptest.NewRecorder()
@@ -41,7 +43,8 @@ func Test_GetBalanceHandler(t *testing.T) {
 
 func Test_PostEventHandler(t *testing.T) {
 	t.Run("should deposit balance for non existing account", func(t *testing.T) {
-		CreateService(in_memory.NewRepository())
+		repo := in_memory.NewRepository()
+		InjectService(core.NewService(repo))
 
 		payload := EventRequest{
 			Type:        "deposit",
@@ -58,7 +61,8 @@ func Test_PostEventHandler(t *testing.T) {
 	})
 
 	t.Run("should deposit balance into existing account", func(t *testing.T) {
-		CreateService(in_memory.NewRepository())
+		repo := in_memory.NewRepository()
+		InjectService(core.NewService(repo))
 
 		_, err := GetService().CreateAccount(models.Account{ID: "100", Balance: 10})
 		require.NoError(t, err)
@@ -78,7 +82,8 @@ func Test_PostEventHandler(t *testing.T) {
 	})
 
 	t.Run("should not withdraw from non existing account", func(t *testing.T) {
-		CreateService(in_memory.NewRepository())
+		repo := in_memory.NewRepository()
+		InjectService(core.NewService(repo))
 
 		payload := EventRequest{
 			Type:        "withdraw",
@@ -95,7 +100,8 @@ func Test_PostEventHandler(t *testing.T) {
 	})
 
 	t.Run("should withdraw from existing account", func(t *testing.T) {
-		CreateService(in_memory.NewRepository())
+		repo := in_memory.NewRepository()
+		InjectService(core.NewService(repo))
 
 		_, err := GetService().CreateAccount(models.Account{ID: "100", Balance: 20})
 		require.NoError(t, err)
@@ -115,7 +121,8 @@ func Test_PostEventHandler(t *testing.T) {
 	})
 
 	t.Run("should transfer from existing account", func(t *testing.T) {
-		CreateService(in_memory.NewRepository())
+		repo := in_memory.NewRepository()
+		InjectService(core.NewService(repo))
 
 		_, err := GetService().CreateAccount(models.Account{ID: "100", Balance: 15})
 		require.NoError(t, err)
@@ -138,7 +145,8 @@ func Test_PostEventHandler(t *testing.T) {
 
 func Test_ResetHandler(t *testing.T) {
 	t.Run("should reset state", func(t *testing.T) {
-		CreateService(in_memory.NewRepository())
+		repo := in_memory.NewRepository()
+		InjectService(core.NewService(repo))
 
 		req := httptest.NewRequest("POST", "/reset", nil)
 		w := httptest.NewRecorder()
