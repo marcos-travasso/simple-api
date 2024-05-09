@@ -1,6 +1,6 @@
 package models
 
 type Account struct {
-	ID      string
-	Balance int
+	ID      string `json:"id"`
+	Balance int    `json:"balance"`
 }
